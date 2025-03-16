@@ -12,8 +12,15 @@ const pages = [
 
 function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
   const location = useLocation();
   const { toggleCart, getCartCount, addToCart } = useCart();
+  
+  useEffect(() => {
+    // Check if user is admin on component mount and route changes
+    const adminStatus = localStorage.getItem('isAdmin');
+    setIsAdmin(adminStatus === 'true');
+  }, [location]);
   
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -39,6 +46,14 @@ function Navbar() {
     
     addToCart(sampleProduct);
   };
+  
+  const handleLogout = () => {
+    localStorage.removeItem('isAdmin');
+    setIsAdmin(false);
+    if (location.pathname.startsWith('/admin')) {
+      window.location.href = '/';
+    }
+  };
 
   return (
     <nav className="sticky top-0 z-50 bg-white/80 backdrop-blur-md shadow-sm">
@@ -58,7 +73,7 @@ function Navbar() {
             <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
               {pages.map((page) => (
                 <Link
-                  key={page.title}
+                  key={page.title} 
                   to={page.path}
                   className={`${
                     location.pathname === page.path
@@ -69,12 +84,55 @@ function Navbar() {
                   {page.title}
                 </Link>
               ))}
+              
+              {/* Admin Panel Link - Only visible to admins */}
+              {isAdmin && (
+                <Link
+                  to="/admin"
+                  className={`${
+                    location.pathname.startsWith('/admin')
+                      ? 'border-primary-500 text-gray-900'
+                      : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'
+                  } inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium`}
+                >
+                  Admin Panel
+                </Link>
+              )}
             </div>
           </div>
           
           {/* Mobile menu button and cart */}
           <div className="flex items-center">
+            {/* Admin actions for desktop */}
+            {isAdmin && (
+              <button 
+                onClick={handleLogout}
+                className="hidden sm:inline-flex text-gray-500 hover:text-gray-700 px-3 py-2 rounded-md text-sm font-medium"
+              >
+                Logout
+              </button>
+            )}
+            
+            {/* Admin login for non-admins */}
+            {!isAdmin && (
+              <Link
+                to="/admin-login"
+                className="hidden sm:inline-flex text-gray-500 hover:text-gray-700 px-3 py-2 rounded-md text-sm font-medium"
+              >
+                Admin Login
+              </Link>
+            )}
+            
             {/* Add to cart button (desktop) */}
+            <button
+              className="hidden sm:flex items-center mr-4 px-4 py-2 rounded-md bg-primary-50 text-primary-600 hover:bg-primary-100 transition duration-150"
+              onClick={handleAddToCart}
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+              </svg>
+              Add to Cart
+            </button>
             
             {/* Cart button - shows shopping list when clicked */}
             <button 
@@ -95,7 +153,16 @@ function Navbar() {
               )}
             </button>
             
-
+            {/* Add to cart button (mobile) */}
+            <button
+              className="sm:hidden p-2 text-primary-600"
+              onClick={handleAddToCart}
+              aria-label="Add to cart"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+              </svg>
+            </button>
             
             {/* Mobile menu button */}
             <div className="sm:hidden ml-4">
@@ -124,26 +191,89 @@ function Navbar() {
       {/* Mobile menu, show/hide based on menu state */}
       <div className={`${isMenuOpen ? 'block' : 'hidden'} sm:hidden`}>
         <div className="pt-2 pb-3 space-y-1">
-          {pages.map((page) => (
+            {pages.map((page) => (
             <Link
-              key={page.title}
-              to={page.path}
+                key={page.title}
+                to={page.path}
               className={`${
                 location.pathname === page.path
                   ? 'bg-primary-50 border-primary-500 text-primary-700'
                   : 'border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800'
               } block pl-3 pr-4 py-2 border-l-4 text-base font-medium`}
               onClick={() => setIsMenuOpen(false)}
-            >
-              {page.title}
+              >
+                {page.title}
             </Link>
           ))}
           
-
+          {/* Admin Panel Link in Mobile Menu - Only for admins */}
+          {isAdmin && (
+            <>
+              <Link
+                to="/admin"
+                className={`${
+                  location.pathname.startsWith('/admin')
+                    ? 'bg-primary-50 border-primary-500 text-primary-700'
+                    : 'border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800'
+                } block pl-3 pr-4 py-2 border-l-4 text-base font-medium`}
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Admin Panel
+              </Link>
+              <button
+                className="w-full text-left border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800 block pl-3 pr-4 py-2 border-l-4 text-base font-medium"
+                onClick={() => {
+                  handleLogout();
+                  setIsMenuOpen(false);
+                }}
+              >
+                Logout
+              </button>
+            </>
+          )}
+          
+          {/* Admin Login Link in Mobile Menu - Only for non-admins */}
+          {!isAdmin && (
+            <Link
+              to="/admin-login"
+              className="border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800 block pl-3 pr-4 py-2 border-l-4 text-base font-medium"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              Admin Login
+            </Link>
+          )}
+          
+          {/* Mobile add to cart button in menu */}
+          <button
+            className="flex items-center w-full pl-3 pr-4 py-2 border-l-4 border-transparent text-base font-medium text-primary-600 hover:bg-gray-50 hover:border-primary-300"
+            onClick={() => {
+              handleAddToCart();
+              setIsMenuOpen(false);
+            }}
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+            </svg>
+            Add to Cart
+          </button>
+          
+          {/* Mobile view cart button in menu */}
+          <button
+            className="flex items-center w-full pl-3 pr-4 py-2 border-l-4 border-transparent text-base font-medium text-primary-600 hover:bg-gray-50 hover:border-primary-300"
+            onClick={() => {
+              toggleCart();
+              setIsMenuOpen(false);
+            }}
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+            </svg>
+            View Cart {getCartCount() > 0 && `(${getCartCount()})`}
+          </button>
         </div>
       </div>
     </nav>
   );
 }
 
-export default Navbar;
+export default Navbar; 

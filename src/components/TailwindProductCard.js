@@ -52,27 +52,6 @@ function TailwindProductCard({ product }) {
     }, 3000);
   };
 
-  // Handle quantity change
-  const handleQuantityChange = (e) => {
-    const value = parseInt(e.target.value);
-    if (value > 0 && value <= stock) {
-      setQuantity(value);
-    }
-  };
-
-  // Decrease quantity
-  const decreaseQuantity = () => {
-    if (quantity > 1) {
-      setQuantity(quantity - 1);
-    }
-  };
-
-  // Increase quantity
-  const increaseQuantity = () => {
-    if (quantity < stock) {
-      setQuantity(quantity + 1);
-    }
-  };
 
   // Determine stock status styling
   const getStockStatus = () => {
@@ -162,38 +141,6 @@ function TailwindProductCard({ product }) {
           </span>
         </div>
         
-        {/* Quantity Selector */}
-        {stock > 0 && (
-          <div className="flex items-center mt-4 mb-2">
-            <span className="text-sm text-gray-600 mr-2">Qty:</span>
-            <div className="flex border border-gray-300 rounded-md">
-              <button 
-                className="w-8 h-8 flex items-center justify-center bg-gray-50 text-gray-600 rounded-l-md hover:bg-gray-100"
-                onClick={decreaseQuantity}
-              >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M20 12H4"></path>
-                </svg>
-              </button>
-              <input 
-                type="number" 
-                className="w-12 h-8 text-center text-sm border-x border-gray-300 focus:outline-none" 
-                value={quantity}
-                onChange={handleQuantityChange}
-                min="1"
-                max={stock}
-              />
-              <button 
-                className="w-8 h-8 flex items-center justify-center bg-gray-50 text-gray-600 rounded-r-md hover:bg-gray-100"
-                onClick={increaseQuantity}
-              >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
-                </svg>
-              </button>
-            </div>
-          </div>
-        )}
         
         {/* Add to Cart Button */}
         <button 

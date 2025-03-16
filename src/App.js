@@ -1,39 +1,125 @@
 import React from 'react';
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, Navigate, Outlet } from 'react-router-dom';
 import { Box } from '@mui/material';
 import { CartProvider } from './context/CartContext';
 
-// Import pages
+// Admin pages
+import Dashboard from './pages/admin/Dashboard';
+import Products from './pages/admin/Products';
+import Orders from './pages/admin/Orders';
+import Users from './pages/admin/Users';
+import Reports from './pages/admin/Reports';
+import Invoices from './pages/admin/Invoices';
+import Settings from './pages/admin/Settings';
+import Help from './pages/admin/Help';
+
+// Main pages
 import HomePage from './pages/HomePage';
 import ProductsPage from './pages/ProductsPage';
 import ProductDetailPage from './pages/ProductDetailPage';
 import AboutPage from './pages/AboutPage';
 import ContactPage from './pages/ContactPage';
 import TailwindShowcasePage from './pages/TailwindShowcasePage';
+import CheckoutPage from './pages/CheckoutPage';
+import OrderSuccessPage from './pages/OrderSuccessPage';
+import AdminLogin from './pages/AdminLogin';
 
-// Import components
+// Components and Layouts
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import TempCart from './components/TempCart';
+import AdminRoute from './components/AdminRoute';
+import AdminLayout from './layouts/AdminLayout';
+import AuthLayout from './layouts/AuthLayout';
+import Login from './pages/auth/Login';
+import Register from './pages/auth/Register';
+import ForgotPassword from './pages/auth/ForgotPassword';
+import ShoppingCart from './components/ShoppingCart';
+
+// Main Layout Component
+const MainLayout = () => {
+  return (
+    <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+      <Navbar />
+      <Box component="main" sx={{ flexGrow: 1 }}>
+        <Outlet />
+      </Box>
+      <Footer />
+      {/* <TempCart /> */}
+    </Box>
+  );
+};
 
 function App() {
   return (
     <CartProvider>
-      <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
-        <Navbar />
-        <Box component="main" sx={{ flexGrow: 1 }}>
-          <Routes>
-            <Route path="/" element={<HomePage />} />
-            <Route path="/products" element={<ProductsPage />} />
-            <Route path="/products/:id" element={<ProductDetailPage />} />
-            <Route path="/about" element={<AboutPage />} />
-            <Route path="/contact" element={<ContactPage />} />
-            <Route path="/tailwind" element={<TailwindShowcasePage />} />
-          </Routes>
-        </Box>
-        <Footer />
-        <TempCart />
-      </Box>
+      <ShoppingCart />
+      <Routes>
+        <Route path="/" element={<MainLayout />}>
+          <Route index element={<HomePage />} />
+          <Route path="products" element={<ProductsPage />} />
+          <Route path="products/:id" element={<ProductDetailPage />} />
+          <Route path="about" element={<AboutPage />} />
+          <Route path="contact" element={<ContactPage />} />
+          <Route path="tailwind" element={<TailwindShowcasePage />} />
+          <Route path="checkout" element={<CheckoutPage />} />
+          <Route path="order-success" element={<OrderSuccessPage />} />
+        </Route>
+
+        {/* Auth Routes */}
+        <Route path="/auth" element={<AuthLayout />}>
+          <Route path="login" element={<Login />} />
+          <Route path="register" element={<Register />} />
+          <Route path="forgot-password" element={<ForgotPassword />} />
+        </Route>
+
+        {/* Admin Routes */}
+        <Route path="/admin" element={<AdminLayout />}>
+          <Route path="dashboard" element={
+            <AdminRoute>
+              <Dashboard />
+            </AdminRoute>
+          } />
+          <Route path="products" element={
+            <AdminRoute>
+              <Products />
+            </AdminRoute>
+          } />
+          <Route path="orders" element={
+            <AdminRoute>
+              <Orders />
+            </AdminRoute>
+          } />
+          <Route path="users" element={
+            <AdminRoute>
+              <Users />
+            </AdminRoute>
+          } />
+          <Route path="reports" element={
+            <AdminRoute>
+              <Reports />
+            </AdminRoute>
+          } />
+          <Route path="invoices" element={
+            <AdminRoute>
+              <Invoices />
+            </AdminRoute>
+          } />
+          <Route path="settings" element={
+            <AdminRoute>
+              <Settings />
+            </AdminRoute>
+          } />
+          <Route path="help" element={
+            <AdminRoute>
+              <Help />
+            </AdminRoute>
+          } />
+        </Route>
+
+        {/* Redirect unmatched routes to home */}
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
     </CartProvider>
   );
 }

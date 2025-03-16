@@ -20,13 +20,15 @@ export const CartProvider = ({ children }) => {
       const existingItem = prevItems.find(i => i.id === item.id);
       
       if (existingItem) {
-        // If it exists, increase quantity
+        // If it exists, add the new quantity to existing quantity
         return prevItems.map(i => 
-          i.id === item.id ? { ...i, quantity: i.quantity + 1 } : i
+          i.id === item.id 
+            ? { ...i, quantity: i.quantity + (item.quantity || 1) }
+            : i
         );
       } else {
-        // If it's a new item, add it with quantity 1
-        return [...prevItems, { ...item, quantity: 1 }];
+        // If it's a new item, add it with the specified quantity or default to 1
+        return [...prevItems, { ...item, quantity: item.quantity || 1 }];
       }
     });
   };

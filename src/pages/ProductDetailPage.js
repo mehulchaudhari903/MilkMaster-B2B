@@ -32,6 +32,7 @@ import VerifiedIcon from '@mui/icons-material/Verified';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 import products from '../data/products';
+import { useCart } from '../context/CartContext';
 
 // Placeholder image for products without images
 const placeholderImage = 'https://via.placeholder.com/600x400?text=Dairy+Product';
@@ -41,13 +42,19 @@ function ProductDetailPage() {
   const navigate = useNavigate();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
-  
-  // Find the product with the matching ID
-  const product = products.find(p => p.id === parseInt(id));
+  const { addToCart } = useCart();
+  // Find the product with the matching ID (handle both string and number IDs)
+  const product = products.find(p => p.id === id || p.id === parseInt(id));
   
   // State for quantity
-  const [quantity, setQuantity] = useState(product ? product.minOrder : 1);
+  const [quantity, setQuantity] = useState(1);
   const [addedToCart, setAddedToCart] = useState(false);
+
+  useEffect(() => {
+    if (product?.minOrder) {
+      setQuantity(product.minOrder);
+    }
+  }, [product]);
 
   // Handle quantity change
   const handleQuantityChange = (event) => {
@@ -70,7 +77,13 @@ function ProductDetailPage() {
   };
 
   // Handle add to cart
-  const handleAddToCart = () => {
+  const handleAddToCart = (e) => {
+    e.stopPropagation(); // Prevent card click when clicking on the button
+    const productWithQuantity = {
+      ...product,
+      quantity: quantity // Add the selected quantity to the product
+    };
+    addToCart(productWithQuantity);
     setAddedToCart(true);
     setTimeout(() => {
       setAddedToCart(false);
