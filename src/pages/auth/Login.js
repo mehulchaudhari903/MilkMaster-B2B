@@ -8,6 +8,7 @@ import {
   Card,
   Typography,
   Divider,
+  Box,
 } from '@mui/material';
 import { Link, useNavigate } from 'react-router-dom';
 import EmailIcon from '@mui/icons-material/Email';
@@ -24,6 +25,12 @@ const Login = () => {
     password: '',
   });
   const [error, setError] = useState('');
+  
+  // Demo credentials
+  const demoCredentials = {
+    email: 'user@example.com',
+    password: 'password123'
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -35,13 +42,27 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    // Simple validation
+    if (!formData.email || !formData.password) {
+      setError('Email and password are required');
+      return;
+    }
+    
     try {
-      // Here you would typically make an API call to authenticate
-      console.log('Login attempt with:', formData);
-      // For demo, navigate to dashboard on "successful" login
-      navigate('/admin/dashboard');
+      // Check against demo credentials
+      if (formData.email === demoCredentials.email && 
+          formData.password === demoCredentials.password) {
+        // Set user flag in localStorage
+        localStorage.setItem('isLoggedIn', 'true');
+        
+        // Navigate to home page on successful login
+        navigate('/');
+      } else {
+        setError('Invalid email or password');
+      }
     } catch (err) {
-      setError('Invalid email or password');
+      setError('An error occurred during login');
     }
   };
 
@@ -73,13 +94,6 @@ const Login = () => {
               value={formData.email}
               onChange={handleChange}
               required
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <EmailIcon className="text-gray-400" />
-                  </InputAdornment>
-                ),
-              }}
             />
 
             <TextField
@@ -91,11 +105,7 @@ const Login = () => {
               onChange={handleChange}
               required
               InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <LockIcon className="text-gray-400" />
-                  </InputAdornment>
-                ),
+               
                 endAdornment: (
                   <InputAdornment position="end">
                     <IconButton
@@ -156,6 +166,12 @@ const Login = () => {
               </Link>
             </Typography>
           </div>
+          
+          <Box sx={{ mt: 2 }}>
+            <Typography variant="body2" color="text.secondary" align="center">
+              Demo credentials: user@example.com / password123
+            </Typography>
+          </Box>
         </form>
       </Card>
     </div>

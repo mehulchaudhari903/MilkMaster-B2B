@@ -17,7 +17,7 @@ function AdminSidebar({ isOpen, toggleSidebar }) {
 
   const menuItems = [
     {
-      path: '/admin',
+      path: '/admin/dashboard',
       name: 'Dashboard',
       icon: <HomeIcon className="w-5 h-5" />
     },

@@ -51,7 +51,7 @@ function AdminLogin() {
       localStorage.setItem('isAdmin', 'true');
       
       // Redirect to admin panel
-      navigate('/admin');
+      navigate('/admin/dashboard');
     } else {
       setError('Invalid email or password');
     }

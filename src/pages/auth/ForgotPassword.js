@@ -64,13 +64,7 @@ const ForgotPassword = () => {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <EmailIcon className="text-gray-400" />
-                  </InputAdornment>
-                ),
-              }}
+             
             />
 
             <Button

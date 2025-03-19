@@ -54,7 +54,7 @@ function App() {
   return (
     <CartProvider>
       <ShoppingCart />
-      <Routes>
+          <Routes>
         <Route path="/" element={<MainLayout />}>
           <Route index element={<HomePage />} />
           <Route path="products" element={<ProductsPage />} />
@@ -73,7 +73,9 @@ function App() {
           <Route path="forgot-password" element={<ForgotPassword />} />
         </Route>
 
-        {/* Admin Routes */}
+        <Route path="/admin" element={<AdminLogin />} />
+            
+            {/* Admin Routes */}
         <Route path="/admin" element={<AdminLayout />}>
           <Route path="dashboard" element={
             <AdminRoute>
@@ -111,15 +113,15 @@ function App() {
             </AdminRoute>
           } />
           <Route path="help" element={
-            <AdminRoute>
+                <AdminRoute>
               <Help />
-            </AdminRoute>
+                </AdminRoute>
           } />
         </Route>
 
         {/* Redirect unmatched routes to home */}
         <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
+          </Routes>
     </CartProvider>
   );
 }

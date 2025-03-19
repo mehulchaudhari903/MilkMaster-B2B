@@ -2,8 +2,9 @@ import React, { useState } from 'react';
 import { useTheme, useMediaQuery } from '@mui/material';
 import AdminNavbar from '../components/AdminNavbar';
 import AdminSidebar from '../components/AdminSidebar';
+import { Outlet } from 'react-router-dom';
 
-function AdminLayout({ children }) {
+function AdminLayout() {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('lg'));
   const [isSidebarOpen, setIsSidebarOpen] = useState(!isMobile);
@@ -32,7 +33,7 @@ function AdminLayout({ children }) {
         <AdminNavbar toggleSidebar={toggleSidebar} />
         <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100">
           <div className="container  px-4 sm:px-6 lg:px-8 py-6">
-            {children}
+            <Outlet />
           </div>
         </main>
       </div>
